@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}Check-in {{ sala.nombre }}{% endblock %}
+{% block body %}
+<div class="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-900 to-blue-700 px-4">
+  <div class="bg-white rounded-2xl shadow-xl p-8 max-w-sm w-full">
+
+    <div class="text-center mb-5">
+      <div class="text-5xl mb-2">{{ '📚' if sala.slug == 'estudio' else '🛋️' }}</div>
+      <h1 class="text-2xl font-bold text-gray-800">{{ sala.nombre }}</h1>
+      <p class="text-xs text-gray-400">Hola, {{ estudiante.nombre.split()[0] }}</p>
+    </div>
+
+    {% if sancion %}
+    <!-- ACCESO DENEGADO -->
+    <div class="bg-red-50 border border-red-200 rounded-xl p-5 text-center">
+      <div class="text-4xl mb-2">🚫</div>
+      <h2 class="text-lg font-bold text-red-700 mb-1">Acceso Denegado</h2>
+      <p class="text-red-600 text-sm mb-3">Tienes una sanción activa.</p>
+      <div class="text-left text-sm text-gray-600 bg-white rounded-lg p-3 border">
+        <p><span class="font-medium">Motivo:</span> {{ sancion.motivo }}</p>
+        <p class="mt-1"><span class="font-medium">Tipo:</span>
+          {% if sancion.tipo.value == 'PERMANENTE' %}
+            <span class="text-red-600 font-semibold">Permanente</span>
+          {% else %}
+            Temporal — hasta el {{ sancion.fecha_fin.strftime('%d/%m/%Y') if sancion.fecha_fin else '—' }}
+          {% endif %}
+        </p>
+        <p class="mt-1"><span class="font-medium">Aplicada por:</span> CEC</p>
+      </div>
+      <p class="text-xs text-gray-400 mt-3">Contacta al CEC para más información.</p>
+    </div>
+
+    {% elif ya_dentro %}
+    <!-- YA ESTÁ DENTRO -->
+    <div class="bg-blue-50 border border-blue-200 rounded-xl p-5 text-center">
+      <div class="text-4xl mb-2">✅</div>
+      <h2 class="text-lg font-bold text-blue-700">Ya estás registrado</h2>
+      <p class="text-sm text-gray-500 mt-1">Tienes un ingreso activo en esta sala.</p>
+    </div>
+
+    {% else %}
+    <!-- FORMULARIO CHECK-IN -->
+    <form method="post" action="/checkin/{{ sala.slug }}">
+      <p class="text-sm text-gray-600 mb-4 text-center">¿Cuántas personas externas a la carrera te acompañan?</p>
+
+      <div class="grid grid-cols-3 gap-3 mb-5">
+        {% for n in [0, 1, 2] %}
+        <label class="cursor-pointer">
+          <input type="radio" name="num_foraneos" value="{{ n }}" class="sr-only peer" {% if n == 0 %}checked{% endif %}>
+          <div class="peer-checked:bg-blue-900 peer-checked:text-white bg-gray-100 hover:bg-gray-200 rounded-xl p-3 text-center transition border-2 peer-checked:border-blue-900 border-transparent">
+            <div class="text-2xl mb-1">{{ ['0️⃣','1️⃣','2️⃣'][n] }}</div>
+            <div class="text-sm font-semibold">{{ n }} {{ 'persona' if n <= 1 else 'personas' }}</div>
+          </div>
+        </label>
+        {% endfor %}
+      </div>
+
+      <p class="text-xs text-amber-600 bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">
+        ⚠️ Al ingresar, eres <strong>responsable</strong> del comportamiento de tus acompañantes y del cumplimiento del reglamento.
+      </p>
+
+      <button type="submit"
+        class="w-full bg-blue-900 hover:bg-blue-800 text-white font-bold py-3 rounded-xl transition text-lg">
+        Registrar Ingreso
+      </button>
+    </form>
+    {% endif %}
+
+    <div class="mt-4 flex justify-between text-xs text-gray-400">
+      <a href="/auth/logout" class="hover:text-gray-600">Cerrar sesión</a>
+      <a href="/" class="hover:text-gray-600">Inicio</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

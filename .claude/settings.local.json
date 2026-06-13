@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -c ' *)",
+      "Bash(pip install *)",
+      "Bash(python scripts/cargar_nomina.py \"D:/infooo/nomina matriculados icci 1sem.2026.xlsx\")",
+      "Bash(timeout 8 python -c ' *)",
+      "Bash(python -m uvicorn app.main:app --host 127.0.0.1 --port 8765)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://127.0.0.1:8765/)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://127.0.0.1:8765/admin/login)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://127.0.0.1:8765/checkin/estudio)",
+      "Bash(kill %1)",
+      "Bash(curl -s -o /dev/null -w \"GET / -> %{http_code}\\\\n\" http://127.0.0.1:8765/)",
+      "Bash(curl -s -o /dev/null -w \"GET /admin/login -> %{http_code}\\\\n\" http://127.0.0.1:8765/admin/login)",
+      "Bash(curl -s -o /dev/null -w \"GET /checkin/estudio -> %{http_code}\\\\n\" http://127.0.0.1:8765/checkin/estudio)",
+      "Bash(curl -s -o /dev/null -w \"GET /checkin/descanso -> %{http_code}\\\\n\" http://127.0.0.1:8765/checkin/descanso)",
+      "Bash(curl -s -o /dev/null -w \"GET /denuncias/ -> %{http_code}\\\\n\" http://127.0.0.1:8765/denuncias/)",
+      "Bash(git init *)",
+      "Bash(git add *)"
+    ]
+  }
+}

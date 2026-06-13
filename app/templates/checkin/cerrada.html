@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Sala Cerrada{% endblock %}
+{% block body %}
+<div class="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-gray-700 to-gray-500 px-4">
+  <div class="bg-white rounded-2xl shadow-xl p-8 max-w-sm w-full text-center">
+    <div class="text-6xl mb-4">🔒</div>
+    <h1 class="text-2xl font-bold text-gray-700 mb-2">{{ sala.nombre }}</h1>
+    <p class="text-gray-500 mb-1">Las salas están cerradas en este momento.</p>
+    <p class="text-sm text-gray-400 mb-5">
+      Horario de atención: <strong>Lunes a Viernes · {{ hora_apertura }}:00 – {{ hora_cierre }}:00 hrs</strong>
+    </p>
+    <div class="bg-gray-50 rounded-xl p-3 text-sm text-gray-500 mb-4">
+      Son las {{ ahora.strftime('%H:%M') }} hrs del {{ ['lunes','martes','miércoles','jueves','viernes','sábado','domingo'][ahora.weekday()] }}.
+    </div>
+    <a href="/" class="block text-sm text-blue-500 hover:underline">Volver al inicio</a>
+  </div>
+</div>
+{% endblock %}

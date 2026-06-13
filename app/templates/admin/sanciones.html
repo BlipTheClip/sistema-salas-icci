@@ -1,0 +1,124 @@
+{% extends "base_admin.html" %}
+{% block title %}Sanciones - Panel CEC{% endblock %}
+{% block content %}
+<h1 class="text-2xl font-bold text-gray-800 mb-6">Gestión de Sanciones</h1>
+
+<div class="grid md:grid-cols-3 gap-6">
+  <!-- Formulario nueva sanción -->
+  <div class="md:col-span-1">
+    <div class="bg-white rounded-xl shadow p-6">
+      <h2 class="font-bold text-gray-800 mb-4">Aplicar Sanción</h2>
+      <form method="post" action="/admin/sanciones/aplicar" class="space-y-4">
+        <div>
+          <label class="block text-xs text-gray-500 mb-1">Estudiante</label>
+          <select name="rut_estudiante" required
+            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-400">
+            <option value="">Selecciona un estudiante...</option>
+            {% for est in estudiantes %}
+            <option value="{{ est.rut }}">{{ est.nombre }} ({{ est.rut }})</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-xs text-gray-500 mb-1">Tipo de sanción</label>
+          <select name="tipo" id="tipo_sancion" onchange="toggleDias()"
+            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-400">
+            <option value="TEMPORAL">Temporal</option>
+            <option value="PERMANENTE">Permanente</option>
+          </select>
+        </div>
+
+        <div id="div_dias">
+          <label class="block text-xs text-gray-500 mb-1">Días de suspensión</label>
+          <input type="number" name="dias" min="1" max="365" value="7"
+            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-400" />
+        </div>
+
+        <div>
+          <label class="block text-xs text-gray-500 mb-1">Motivo</label>
+          <select name="motivo" id="sel_motivo" onchange="toggleOtro()"
+            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-400">
+            {% for m in motivos %}
+            <option value="{{ m }}">{{ m }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div id="div_otro" class="hidden">
+          <label class="block text-xs text-gray-500 mb-1">Especificar motivo</label>
+          <textarea name="motivo_otro" rows="2"
+            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-400"
+            placeholder="Describe el motivo..."></textarea>
+        </div>
+
+        <button type="submit"
+          class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2.5 rounded-lg transition"
+          onclick="return confirm('¿Confirmas aplicar esta sanción?')">
+          Aplicar Sanción
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Listado sanciones -->
+  <div class="md:col-span-2">
+    <div class="bg-white rounded-xl shadow overflow-hidden">
+      <div class="px-6 py-4 border-b">
+        <h2 class="font-semibold text-gray-700">Historial de Sanciones</h2>
+      </div>
+      {% if sanciones %}
+      <div class="divide-y divide-gray-100">
+        {% for s in sanciones %}
+        <div class="px-6 py-4 {% if s.activa and (s.fecha_fin is none or s.fecha_fin >= ahora) %}bg-red-50{% endif %}">
+          <div class="flex items-start justify-between">
+            <div>
+              <p class="font-medium text-gray-800">{{ s.estudiante.nombre }}</p>
+              <p class="text-xs text-gray-400">{{ s.rut_estudiante }}</p>
+              <p class="text-sm text-gray-600 mt-1">{{ s.motivo }}</p>
+              <div class="flex gap-2 mt-1 text-xs text-gray-400">
+                <span>Desde {{ s.fecha_inicio.strftime('%d/%m/%Y') }}</span>
+                {% if s.tipo.value == 'TEMPORAL' %}
+                  <span>—</span>
+                  <span>Hasta {{ s.fecha_fin.strftime('%d/%m/%Y') if s.fecha_fin else '—' }}</span>
+                {% else %}
+                  <span class="text-red-500 font-medium">· Permanente</span>
+                {% endif %}
+                <span>· Por: {{ s.auditor_username }}</span>
+              </div>
+            </div>
+            <div class="flex flex-col items-end gap-2">
+              {% if s.activa and (s.fecha_fin is none or s.fecha_fin >= ahora) %}
+                <span class="bg-red-100 text-red-700 text-xs px-2 py-0.5 rounded-full font-medium">Activa</span>
+                <form method="post" action="/admin/sanciones/{{ s.id }}/revocar">
+                  <button type="submit" class="text-xs text-gray-400 hover:text-gray-700 underline"
+                    onclick="return confirm('¿Revocar esta sanción?')">Revocar</button>
+                </form>
+              {% else %}
+                <span class="bg-gray-100 text-gray-500 text-xs px-2 py-0.5 rounded-full">
+                  {{ 'Revocada' if not s.activa else 'Expirada' }}
+                </span>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="px-6 py-10 text-center text-gray-400">No hay sanciones registradas.</div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<script>
+function toggleDias() {
+  const tipo = document.getElementById('tipo_sancion').value;
+  document.getElementById('div_dias').style.display = tipo === 'TEMPORAL' ? 'block' : 'none';
+}
+function toggleOtro() {
+  const motivo = document.getElementById('sel_motivo').value;
+  document.getElementById('div_otro').style.display = motivo === 'Otro' ? 'block' : 'none';
+}
+</script>
+{% endblock %}

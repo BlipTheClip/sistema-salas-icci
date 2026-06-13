@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% block title %}Denuncias - Salas ICCI{% endblock %}
+{% block body %}
+<div class="min-h-screen bg-gray-50">
+  <!-- Header -->
+  <div class="bg-blue-900 text-white px-6 py-4 flex items-center justify-between">
+    <div>
+      <h1 class="font-bold text-lg">Denuncias</h1>
+      <p class="text-blue-200 text-xs">Salas ICCI - CEC</p>
+    </div>
+    <div class="flex items-center gap-3 text-sm">
+      <span class="text-blue-200">{{ estudiante.nombre.split()[0] }}</span>
+      <a href="/auth/logout" class="bg-blue-700 hover:bg-blue-600 px-3 py-1 rounded text-xs">Salir</a>
+    </div>
+  </div>
+
+  <div class="max-w-2xl mx-auto px-4 py-6">
+
+    {% if request.query_params.get('enviada') %}
+    <div class="bg-green-50 border border-green-200 text-green-700 rounded-xl px-5 py-4 mb-5 flex items-center gap-3">
+      <span class="text-2xl">✅</span>
+      <div>
+        <p class="font-semibold">Denuncia enviada correctamente</p>
+        <p class="text-sm">El CEC la revisará y tomará las medidas correspondientes.</p>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Formulario nueva denuncia -->
+    <div class="bg-white rounded-xl shadow p-6 mb-6">
+      <h2 class="font-bold text-gray-800 mb-4">Realizar una Denuncia</h2>
+      <p class="text-sm text-gray-500 mb-4">
+        Tu identidad será protegida. El CEC verá quién reporta, pero el estudiante denunciado no sabrá quién lo hizo.
+      </p>
+
+      <form method="post" action="/denuncias/enviar" class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Estudiante denunciado *</label>
+          <select name="rut_denunciado" required
+            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="">Selecciona al estudiante...</option>
+            {% for est in estudiantes %}
+            <option value="{{ est.rut }}">{{ est.nombre }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Sala</label>
+            <select name="sala_id"
+              class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <option value="">No especificada</option>
+              {% for sala in salas %}
+              <option value="{{ sala.id }}">{{ sala.nombre }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Fecha del incidente *</label>
+            <input type="date" name="fecha_incidente" required
+              class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Hora aproximada</label>
+          <input type="time" name="hora_incidente" value="12:00"
+            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Descripción del incidente *</label>
+          <textarea name="descripcion" rows="4" required
+            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Describe lo que ocurrió con el mayor detalle posible..."></textarea>
+        </div>
+
+        <button type="submit"
+          class="w-full bg-blue-900 hover:bg-blue-800 text-white font-semibold py-3 rounded-xl transition">
+          Enviar Denuncia
+        </button>
+      </form>
+    </div>
+
+    <!-- Mis denuncias -->
+    {% if mis_denuncias %}
+    <div class="bg-white rounded-xl shadow p-6">
+      <h2 class="font-bold text-gray-800 mb-4">Mis Denuncias Enviadas</h2>
+      {% set colores = {
+        'PENDIENTE': 'bg-yellow-100 text-yellow-700',
+        'EN_REVISION': 'bg-blue-100 text-blue-700',
+        'RESUELTA': 'bg-green-100 text-green-700',
+        'ARCHIVADA': 'bg-gray-100 text-gray-500'
+      } %}
+      <div class="space-y-3">
+        {% for d in mis_denuncias %}
+        <div class="border border-gray-100 rounded-lg p-4">
+          <div class="flex justify-between items-start">
+            <div>
+              <p class="text-sm font-medium text-gray-700">
+                Denuncia del {{ d.fecha_creacion.strftime('%d/%m/%Y') }}
+              </p>
+              <p class="text-xs text-gray-400">Sala: {{ d.sala.nombre if d.sala else 'No especificada' }}</p>
+            </div>
+            <span class="text-xs px-2 py-0.5 rounded-full {{ colores.get(d.estado.value, 'bg-gray-100') }}">
+              {{ d.estado.value.replace('_', ' ') }}
+            </span>
+          </div>
+          <p class="text-xs text-gray-500 mt-2 line-clamp-2">{{ d.descripcion }}</p>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    <a href="/" class="block text-center text-sm text-gray-400 hover:underline mt-4">Volver al inicio</a>
+  </div>
+</div>
+{% endblock %}

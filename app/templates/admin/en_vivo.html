@@ -1,0 +1,72 @@
+{% extends "base_admin.html" %}
+{% block title %}En Vivo - Panel CEC{% endblock %}
+{% block content %}
+<div class="flex items-center justify-between mb-6">
+  <h1 class="text-2xl font-bold text-gray-800">Vista en Tiempo Real</h1>
+  <div class="text-sm text-gray-400">
+    Actualizado: {{ ahora.strftime('%H:%M:%S') }}
+    <button onclick="location.reload()" class="ml-2 text-blue-500 hover:underline">↻ Actualizar</button>
+  </div>
+</div>
+
+{% for dato in datos_salas %}
+<div class="bg-white rounded-xl shadow mb-6">
+  <div class="flex items-center justify-between px-6 py-4 border-b">
+    <h2 class="text-lg font-bold text-gray-800">
+      {{ '📚' if dato.sala.slug == 'estudio' else '🛋️' }} {{ dato.sala.nombre }}
+    </h2>
+    <span class="bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full">
+      {{ dato.total_personas }} persona{{ 's' if dato.total_personas != 1 else '' }} dentro
+    </span>
+  </div>
+
+  {% if dato.registros %}
+  <div class="overflow-x-auto">
+    <table class="w-full text-sm">
+      <thead class="bg-gray-50 text-gray-500 text-xs uppercase">
+        <tr>
+          <th class="px-6 py-3 text-left">Estudiante</th>
+          <th class="px-6 py-3 text-left">RUT</th>
+          <th class="px-6 py-3 text-left">Ingresó</th>
+          <th class="px-6 py-3 text-left">Tiempo</th>
+          <th class="px-6 py-3 text-left">Foráneos</th>
+          <th class="px-6 py-3 text-left">Acción</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100">
+        {% for r in dato.registros %}
+        <tr class="hover:bg-gray-50">
+          <td class="px-6 py-3 font-medium text-gray-800">{{ r.estudiante.nombre }}</td>
+          <td class="px-6 py-3 text-gray-500">{{ r.rut_estudiante }}</td>
+          <td class="px-6 py-3 text-gray-500">{{ r.hora_entrada.strftime('%H:%M') }} hrs</td>
+          <td class="px-6 py-3 text-gray-500">
+            {% set mins = ((ahora - r.hora_entrada).total_seconds() // 60)|int %}
+            {% if mins < 60 %}{{ mins }} min{% else %}{{ (mins // 60)|int }}h {{ (mins % 60)|int }}min{% endif %}
+          </td>
+          <td class="px-6 py-3">
+            {% if r.num_foraneos > 0 %}
+              <span class="bg-amber-100 text-amber-700 px-2 py-0.5 rounded text-xs">+{{ r.num_foraneos }}</span>
+            {% else %}
+              <span class="text-gray-300">—</span>
+            {% endif %}
+          </td>
+          <td class="px-6 py-3">
+            <a href="/admin/sanciones?rut={{ r.rut_estudiante }}"
+               class="text-xs text-red-500 hover:underline">Sancionar</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="px-6 py-8 text-center text-gray-400">
+    <p class="text-3xl mb-2">🏜️</p>
+    <p>No hay nadie dentro en este momento.</p>
+  </div>
+  {% endif %}
+</div>
+{% endfor %}
+
+<script>setTimeout(() => location.reload(), 60000);</script>
+{% endblock %}

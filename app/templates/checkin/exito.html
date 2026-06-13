@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Ingreso Registrado{% endblock %}
+{% block body %}
+<div class="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-green-700 to-green-500 px-4">
+  <div class="bg-white rounded-2xl shadow-xl p-8 max-w-sm w-full text-center">
+    <div class="text-6xl mb-4">✅</div>
+    <h1 class="text-2xl font-bold text-green-700 mb-1">¡Ingreso Registrado!</h1>
+    <p class="text-gray-500 text-sm mb-5">Bienvenido/a a la {{ sala.nombre }}</p>
+
+    <div class="bg-gray-50 rounded-xl p-4 text-left text-sm text-gray-700 mb-5 space-y-2">
+      <div class="flex justify-between">
+        <span class="text-gray-400">Estudiante</span>
+        <span class="font-medium">{{ estudiante.nombre.split()[0] }} {{ estudiante.nombre.split()[-1] }}</span>
+      </div>
+      <div class="flex justify-between">
+        <span class="text-gray-400">Sala</span>
+        <span class="font-medium">{{ sala.nombre }}</span>
+      </div>
+      <div class="flex justify-between">
+        <span class="text-gray-400">Hora de ingreso</span>
+        <span class="font-medium">{{ registro.hora_entrada.strftime('%H:%M') }} hrs</span>
+      </div>
+      <div class="flex justify-between">
+        <span class="text-gray-400">Acompañantes externos</span>
+        <span class="font-medium">{{ num_foraneos }}</span>
+      </div>
+    </div>
+
+    {% if num_foraneos > 0 %}
+    <div class="bg-amber-50 border border-amber-200 rounded-lg p-3 text-xs text-amber-700 mb-4">
+      Recuerda que eres responsable de tus acompañantes durante toda su estadía.
+    </div>
+    {% endif %}
+
+    <form method="post" action="/checkout/{{ registro.id }}" class="mb-3">
+      <button type="submit" class="w-full bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2 rounded-xl transition text-sm">
+        Registrar Salida Ahora
+      </button>
+    </form>
+
+    <a href="/" class="block text-xs text-gray-400 hover:text-gray-600">Volver al inicio</a>
+    <p class="text-xs text-gray-300 mt-3">La salida se registra automáticamente a las 20:00 hrs.</p>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}Salas ICCI - UTA{% endblock %}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: { extend: { colors: { uta: { DEFAULT: '#003087', light: '#1a4db5' } } } }
+    }
+  </script>
+  <style>
+    .badge-pendiente { @apply bg-yellow-100 text-yellow-800; }
+    .badge-en_revision { @apply bg-blue-100 text-blue-800; }
+    .badge-resuelta { @apply bg-green-100 text-green-800; }
+    .badge-archivada { @apply bg-gray-100 text-gray-600; }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen font-sans">
+  {% block body %}{% endblock %}
+</body>
+</html>

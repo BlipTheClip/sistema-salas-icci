@@ -1,0 +1,22 @@
+# Entorno y secretos
+.env
+*.db
+*.sqlite3
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
+
+# QR generados (se regeneran al iniciar)
+app/static/qr/
+
+# Docker volumes
+certbot/
+
+# OS
+.DS_Store
+Thumbs.db

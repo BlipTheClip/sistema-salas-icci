@@ -1,0 +1,102 @@
+{% extends "base_admin.html" %}
+{% block title %}Denuncias - Panel CEC{% endblock %}
+{% block content %}
+<h1 class="text-2xl font-bold text-gray-800 mb-6">Bandeja de Denuncias</h1>
+
+{% set estados_colores = {
+  'PENDIENTE': 'bg-yellow-100 text-yellow-800',
+  'EN_REVISION': 'bg-blue-100 text-blue-800',
+  'RESUELTA': 'bg-green-100 text-green-800',
+  'ARCHIVADA': 'bg-gray-100 text-gray-500'
+} %}
+
+{% if denuncias %}
+<div class="space-y-4">
+  {% for d in denuncias %}
+  <div class="bg-white rounded-xl shadow p-6">
+    <div class="flex items-start justify-between mb-3">
+      <div>
+        <div class="flex items-center gap-2 mb-1">
+          <span class="font-bold text-gray-800">{{ d.denunciado.nombre }}</span>
+          <span class="text-xs text-gray-400">({{ d.rut_denunciado }})</span>
+        </div>
+        <div class="text-xs text-gray-400">
+          Sala: {{ d.sala.nombre if d.sala else 'No especificada' }} ·
+          Incidente: {{ d.fecha_incidente.strftime('%d/%m/%Y %H:%M') }} ·
+          Denuncia recibida: {{ d.fecha_creacion.strftime('%d/%m/%Y') }}
+        </div>
+      </div>
+      <span class="text-xs font-medium px-3 py-1 rounded-full {{ estados_colores.get(d.estado.value, 'bg-gray-100') }}">
+        {{ d.estado.value.replace('_', ' ') }}
+      </span>
+    </div>
+
+    <p class="text-sm text-gray-700 bg-gray-50 rounded-lg p-3 mb-3">{{ d.descripcion }}</p>
+
+    {% if d.nota_auditor %}
+    <p class="text-xs text-blue-600 bg-blue-50 rounded-lg p-2 mb-3">
+      Nota del auditor: {{ d.nota_auditor }}
+    </p>
+    {% endif %}
+
+    <div class="flex flex-wrap gap-3">
+      <!-- Cambiar estado -->
+      <form method="post" action="/admin/denuncias/{{ d.id }}/estado" class="flex gap-2">
+        <select name="estado" class="text-xs border border-gray-300 rounded px-2 py-1 focus:outline-none">
+          {% for estado in ['PENDIENTE', 'EN_REVISION', 'RESUELTA', 'ARCHIVADA'] %}
+          <option value="{{ estado }}" {% if d.estado.value == estado %}selected{% endif %}>{{ estado.replace('_', ' ') }}</option>
+          {% endfor %}
+        </select>
+        <input type="hidden" name="nota_auditor" id="nota_{{ d.id }}" value="{{ d.nota_auditor or '' }}" />
+        <button type="submit" class="text-xs bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded transition">
+          Actualizar estado
+        </button>
+      </form>
+
+      <!-- Aplicar sanción desde denuncia -->
+      {% if d.estado.value not in ['RESUELTA', 'ARCHIVADA'] %}
+      <button onclick="document.getElementById('sancion_form_{{ d.id }}').classList.toggle('hidden')"
+        class="text-xs bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded transition">
+        Aplicar Sanción
+      </button>
+      {% endif %}
+    </div>
+
+    <!-- Form sanción inline -->
+    <div id="sancion_form_{{ d.id }}" class="hidden mt-4 bg-red-50 border border-red-200 rounded-lg p-4">
+      <form method="post" action="/admin/denuncias/{{ d.id }}/sancionar" class="flex flex-wrap gap-3 items-end">
+        <div>
+          <label class="block text-xs text-gray-500 mb-1">Tipo</label>
+          <select name="tipo" class="text-sm border border-gray-300 rounded px-2 py-1">
+            <option value="TEMPORAL">Temporal</option>
+            <option value="PERMANENTE">Permanente</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs text-gray-500 mb-1">Días</label>
+          <input type="number" name="dias" value="7" min="1" class="text-sm border border-gray-300 rounded px-2 py-1 w-20" />
+        </div>
+        <div class="flex-1 min-w-40">
+          <label class="block text-xs text-gray-500 mb-1">Motivo</label>
+          <select name="motivo" class="w-full text-sm border border-gray-300 rounded px-2 py-1">
+            {% for m in motivos %}
+            <option value="{{ m }}">{{ m }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <button type="submit" class="text-sm bg-red-700 hover:bg-red-800 text-white px-4 py-1.5 rounded transition"
+          onclick="return confirm('¿Aplicar sanción a {{ d.denunciado.nombre }}?')">
+          Confirmar Sanción
+        </button>
+      </form>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="bg-white rounded-xl shadow px-6 py-16 text-center text-gray-400">
+  <p class="text-4xl mb-3">📭</p>
+  <p>No hay denuncias registradas.</p>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Salas ICCI - UTA{% endblock %}
+{% block body %}
+<div class="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-900 to-blue-700 px-4">
+  <div class="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full text-center">
+    <div class="mb-4">
+      <span class="text-4xl font-bold text-blue-900">ICCI</span>
+      <p class="text-gray-500 text-sm mt-1">Universidad de Tarapacá · Arica</p>
+    </div>
+    <h1 class="text-2xl font-bold text-gray-800 mb-2">Salas de Estudio y Descanso</h1>
+    <p class="text-gray-500 text-sm mb-8">Escanea el QR en la puerta de la sala para registrar tu ingreso.</p>
+
+    <div class="grid grid-cols-2 gap-4 mb-8">
+      <a href="/checkin/estudio" class="flex flex-col items-center bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-xl p-5 transition">
+        <span class="text-3xl mb-2">📚</span>
+        <span class="font-semibold text-blue-900">Sala de Estudio</span>
+        <span class="text-xs text-gray-400 mt-1">Silencio total</span>
+      </a>
+      <a href="/checkin/descanso" class="flex flex-col items-center bg-green-50 hover:bg-green-100 border border-green-200 rounded-xl p-5 transition">
+        <span class="text-3xl mb-2">🛋️</span>
+        <span class="font-semibold text-green-900">Sala de Descanso</span>
+        <span class="text-xs text-gray-400 mt-1">Ruido moderado</span>
+      </a>
+    </div>
+
+    <a href="/denuncias/" class="block text-sm text-blue-600 hover:underline mb-2">Realizar una denuncia</a>
+    <a href="/admin/" class="block text-xs text-gray-400 hover:underline">Panel CEC (auditores)</a>
+
+    <p class="text-xs text-gray-400 mt-6">Horario: Lunes a Viernes · 08:00 – 20:00 hrs</p>
+  </div>
+</div>
+{% endblock %}

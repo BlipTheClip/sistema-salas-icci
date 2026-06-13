@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}Panel CEC - Salas ICCI{% endblock %}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+
+<!-- Navbar -->
+<nav class="bg-blue-900 text-white px-6 py-3 flex items-center justify-between shadow-md">
+  <div class="flex items-center gap-3">
+    <span class="font-bold text-lg">CEC-ICCI</span>
+    <span class="text-blue-300 text-sm">Panel de Control</span>
+  </div>
+  <div class="flex items-center gap-4 text-sm">
+    <a href="/admin/" class="hover:text-blue-200">Inicio</a>
+    <a href="/admin/en-vivo" class="hover:text-blue-200">En Vivo</a>
+    <a href="/admin/historial" class="hover:text-blue-200">Historial</a>
+    <a href="/admin/sanciones" class="hover:text-blue-200">Sanciones</a>
+    <a href="/admin/denuncias" class="hover:text-blue-200">Denuncias</a>
+    <a href="/admin/reportes/" class="hover:text-blue-200">Reportes</a>
+    {% if auditor and auditor.rol == 'SUPER_ADMIN' %}
+    <a href="/admin/auditores" class="hover:text-blue-200">Auditores</a>
+    {% endif %}
+    <span class="text-blue-300">|</span>
+    <span class="text-blue-200">{{ auditor.nombre if auditor else '' }}</span>
+    <a href="/admin/logout" class="bg-blue-700 hover:bg-blue-600 px-3 py-1 rounded text-xs">Salir</a>
+  </div>
+</nav>
+
+<main class="max-w-7xl mx-auto px-4 py-6">
+  {% block content %}{% endblock %}
+</main>
+</body>
+</html>
