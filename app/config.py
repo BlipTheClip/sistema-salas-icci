@@ -1,7 +1,10 @@
 import os
+from pathlib import Path
 from dotenv import load_dotenv
 
-load_dotenv()
+# Ruta absoluta al .env — funciona sin importar el directorio de trabajo
+_env_path = Path(__file__).parent.parent / ".env"
+load_dotenv(_env_path, override=True)
 
 GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID", "")
 GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET", "")
@@ -16,3 +19,6 @@ DOMINIOS_VALIDOS = {"alumnos.uta.cl", "estudiantes.uta.cl"}
 HORA_APERTURA = 8   # 08:00
 HORA_CIERRE = 20    # 20:00
 DIAS_SEMANA_VALIDOS = {0, 1, 2, 3, 4}  # lunes=0 ... viernes=4
+
+# Cambiar a False antes de desplegar en producción
+MODO_PRUEBA = True

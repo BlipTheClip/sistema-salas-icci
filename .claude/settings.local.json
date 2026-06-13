@@ -16,7 +16,32 @@
       "Bash(curl -s -o /dev/null -w \"GET /checkin/descanso -> %{http_code}\\\\n\" http://127.0.0.1:8765/checkin/descanso)",
       "Bash(curl -s -o /dev/null -w \"GET /denuncias/ -> %{http_code}\\\\n\" http://127.0.0.1:8765/denuncias/)",
       "Bash(git init *)",
-      "Bash(git add *)"
+      "Bash(git add *)",
+      "Bash(gh --version)",
+      "Bash(gh auth *)",
+      "PowerShell(gh *)",
+      "Bash(git config *)",
+      "Bash(git remote *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git branch *)",
+      "Bash(git push *)",
+      "Bash(python *)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:8000/)",
+      "Bash(powershell.exe -Command \"Get-Process -Name python -ErrorAction SilentlyContinue | Stop-Process -Force\")",
+      "Bash(netstat -ano)",
+      "Bash(awk '{print $5}')",
+      "Bash(taskkill //F //PID 13324)",
+      "Bash(taskkill //F //PID 9464)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:8000/checkin/estudio)",
+      "Bash(grep -v \"^0$\")",
+      "Bash(xargs -I{} taskkill //F //PID {})",
+      "Bash(curl -s http://localhost:8000/checkin/estudio)",
+      "PowerShell(Get-NetTCPConnection *)",
+      "PowerShell(try { $r = Invoke-WebRequest -Uri \"http://localhost:8000/\" -UseBasicParsing -TimeoutSec 2; Write-Host \"Servidor activo, status:\" $r.StatusCode } catch { Write-Host \"Servidor NO activo:\" $_.Exception.Message })",
+      "Bash(fuser -k 8000/tcp)",
+      "Bash(netstat -tlnp)",
+      "Bash(curl -s http://127.0.0.1:8001/checkin/estudio)",
+      "Bash(fuser -k 8001/tcp)"
     ]
   }
 }

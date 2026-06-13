@@ -131,7 +131,8 @@ async def en_vivo(request: Request, db: Session = Depends(get_db)):
         datos_salas.append({
             "sala": sala,
             "registros": registros,
-            "total_personas": sum(1 + r.num_foraneos for r in registros),
+            "total_estudiantes": len(registros),
+            "total_foraneos": sum(r.num_foraneos for r in registros),
         })
 
     return templates.TemplateResponse("admin/en_vivo.html", {
@@ -389,7 +390,9 @@ async def toggle_auditor(auditor_id: int, request: Request, db: Session = Depend
         return RedirectResponse("/admin/", status_code=302)
 
     auditor_obj = db.query(Auditor).filter(Auditor.id == auditor_id).first()
-    if auditor_obj and auditor_obj.username != auditor_ses["username"]:
+    es_su_propia_cuenta = auditor_obj and auditor_obj.username == auditor_ses["username"]
+    es_superadmin = auditor_obj and auditor_obj.rol == RolAuditor.SUPER_ADMIN
+    if auditor_obj and not es_su_propia_cuenta and not es_superadmin:
         auditor_obj.activo = not auditor_obj.activo
         db.commit()
     return RedirectResponse("/admin/auditores", status_code=302)

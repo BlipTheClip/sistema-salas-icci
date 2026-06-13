@@ -15,7 +15,7 @@ templates = Jinja2Templates(directory="app/templates")
 async def denuncias_page(request: Request, db: Session = Depends(get_db)):
     estudiante_session = get_estudiante_session(request)
     if not estudiante_session:
-        request.session["sala_destino"] = "estudio"
+        request.session["destino_post_login"] = "/denuncias/"
         return RedirectResponse("/auth/google/login", status_code=302)
 
     salas = db.query(Sala).all()

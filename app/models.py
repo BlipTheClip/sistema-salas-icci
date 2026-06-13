@@ -43,6 +43,16 @@ class RegistroAcceso(Base):
     auto_checkout = Column(Boolean, default=False)
     estudiante = relationship("Estudiante", back_populates="registros")
     sala = relationship("Sala", back_populates="registros")
+    foraneos = relationship("PersonaForanea", back_populates="registro", cascade="all, delete-orphan")
+
+
+class PersonaForanea(Base):
+    __tablename__ = "personas_foraneas"
+    id = Column(Integer, primary_key=True)
+    registro_id = Column(Integer, ForeignKey("registros_acceso.id"), nullable=False)
+    nombre = Column(String(200), nullable=False)
+    rut_o_id = Column(String(50), nullable=False)
+    registro = relationship("RegistroAcceso", back_populates="foraneos")
 
 
 class TipoSancion(str, enum.Enum):
